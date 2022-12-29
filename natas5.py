@@ -12,7 +12,7 @@ def get_natas6_password(natas5_password):
     natas6_password = re.findall(r"([a-zA-Z\d]{32})", request.text)[1]
     print("[!] The password for Natas 6 is: " + natas6_password)
 
-    return natas5_password
+    return natas6_password
 
 
 if __name__ == '__main__':
