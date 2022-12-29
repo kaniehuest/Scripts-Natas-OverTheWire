@@ -13,5 +13,5 @@ def get_natas4_password(natas3_password):
 
 
 if __name__ == '__main__':
-    natas3_password = "" # Put here the password for natas2 here
+    natas3_password = "" # Put here the password for natas3 here
     get_natas4_password(natas3_password)
