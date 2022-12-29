@@ -6,12 +6,12 @@
 pip3 install -r requirements
 ```
 
-## Usage
+## GET ALL PASSWORDS
 
-Modify the password for the lab inside the script and then run it.
+If you want to get all the passwords for natas run the main script.
 
 Example:
 
 ```
-python3 Natas-14-15.py
+python3 main.py
 ```
