@@ -4,7 +4,6 @@ import string
 from halo import Halo
 
 
-
 def get_natas11_password(natas10_password):
     URL = "http://natas10.natas.labs.overthewire.org"
     spinner = Halo(text='The password for natas 11 is: ',

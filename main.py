@@ -9,6 +9,8 @@ from natas7 import get_natas8_password
 from natas8 import get_natas9_password
 from natas9 import get_natas10_password
 from natas10 import get_natas11_password
+from natas11 import get_natas12_password
+
 
 def main():
     natas1_password = get_natas1_password()
@@ -22,6 +24,8 @@ def main():
     natas9_password = get_natas9_password(natas8_password)
     natas10_password = get_natas10_password(natas9_password)
     natas11_password = get_natas11_password(natas10_password)
+    natas12_password = get_natas12_password(natas11_password)
+
 
 if __name__ == '__main__':
     main()
