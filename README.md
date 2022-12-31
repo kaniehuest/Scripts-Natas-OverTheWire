@@ -15,3 +15,5 @@ Example:
 ```
 python3 main.py
 ```
+
+![](/images/natas1.gif)
