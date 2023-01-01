@@ -8,8 +8,8 @@ def get_secret(session):
     URL_SECRET = "http://natas8.natas.labs.overthewire.org/index-source.html"
 
     # Get the secret
-    request = session.get(URL_SECRET)
-    secret = re.findall(r'([a-zA-Z\d]{32})', request.text)[0]
+    response = session.get(URL_SECRET)
+    secret = re.findall(r'([a-zA-Z\d]{32})', response.text)[0]
 
     # Decode the secret
     secret = bytes.fromhex(secret).decode("utf-8")  # Decode the hex value
@@ -32,8 +32,8 @@ def get_natas9_password(natas8_password):
 
     # Get password for natas9
     data = {"secret": secret, "submit": "true"}
-    request = session.post(URL, data=data)
-    natas9_password = re.findall(r'([a-zA-Z\d]{32})', request.text)[1]
+    response = session.post(URL, data=data)
+    natas9_password = re.findall(r'([a-zA-Z\d]{32})', response.text)[1]
 
     spinner.succeed(text="The password for natas 9 is: " + natas9_password)
 

@@ -12,8 +12,8 @@ def get_natas6_password(natas5_password):
     session = requests.Session()
     session.auth = ("natas5", natas5_password)
     cookies = {"loggedin": "1"}
-    request = session.get(URL, cookies=cookies)
-    natas6_password = re.findall(r"([a-zA-Z\d]{32})", request.text)[1]
+    response = session.get(URL, cookies=cookies)
+    natas6_password = re.findall(r"([a-zA-Z\d]{32})", response.text)[1]
 
     spinner.succeed(text="The password for natas 6 is: " + natas6_password)
 

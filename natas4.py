@@ -13,8 +13,8 @@ def get_natas5_password(natas4_password):
     session.auth = ("natas4", natas4_password)
     headers = {"Referer": "http://natas5.natas.labs.overthewire.org/"}
 
-    request = session.get(URL, headers=headers)
-    natas5_password = re.findall(r"([a-zA-Z\d]{32})", request.text)[1]
+    response = session.get(URL, headers=headers)
+    natas5_password = re.findall(r"([a-zA-Z\d]{32})", response.text)[1]
 
     spinner.succeed(text="The password for natas 5 is: " + natas5_password)
 

@@ -14,13 +14,13 @@ def get_natas7_password(natas6_password):
     session.auth = ("natas6", natas6_password)
 
     # Get secret
-    request = session.get(URL_SECRET)
-    secret = re.findall(r"([a-zA-Z]{19})", request.text)[0]
+    response = session.get(URL_SECRET)
+    secret = re.findall(r"([a-zA-Z]{19})", response.text)[0]
 
     # Get password
     data = {"secret": secret, "submit": "true"}
-    request = session.post(URL, data=data)
-    natas7_password = re.findall(r"([a-zA-Z\d]{32})", request.text)[1]
+    response = session.post(URL, data=data)
+    natas7_password = re.findall(r"([a-zA-Z\d]{32})", response.text)[1]
 
     spinner.succeed(text="The password for natas 7 is: " + natas7_password)
 

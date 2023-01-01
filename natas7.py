@@ -11,8 +11,8 @@ def get_natas8_password(natas7_password):
 
     session = requests.Session()
     session.auth = ("natas7", natas7_password)
-    request = session.get(URL)
-    natas8_password = re.findall(r"([a-zA-Z\d]{32})", request.text)[1]
+    response = session.get(URL)
+    natas8_password = re.findall(r"([a-zA-Z\d]{32})", response.text)[1]
 
     spinner.succeed(text="The password for natas 8 is: " + natas8_password)
 

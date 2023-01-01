@@ -9,10 +9,10 @@ def get_natas2_password(natas1_password):
                    spinner='bouncingBar', color="blue")
     spinner.start()
 
-    s = requests.Session()
-    s.auth = ("natas1", natas1_password)
-    r = s.get(URL)
-    natas2_password = re.findall(r"([a-zA-Z\d]{32})", r.text)[1]
+    session = requests.Session()
+    session.auth = ("natas1", natas1_password)
+    response = session.get(URL)
+    natas2_password = re.findall(r"([a-zA-Z\d]{32})", response.text)[1]
 
     spinner.succeed(text="The password for natas 2 is: " + natas2_password)
 
