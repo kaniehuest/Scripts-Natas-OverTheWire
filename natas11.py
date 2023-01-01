@@ -55,7 +55,7 @@ def get_natas12_password(natas11_password):
 
     spinner.succeed(text="The password for natas 12 is: " + natas12_password)
 
-    return
+    return natas12_password
 
 
 if __name__ == '__main__':
