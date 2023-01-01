@@ -89,12 +89,6 @@ async def main():
 
 
 if __name__ == "__main__":
-    start = time.time()
-
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     asyncio.run(main())
-
-    time_lapsed = time.time() - start
-    print()
-    print(time_lapsed)
