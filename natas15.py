@@ -1,5 +1,3 @@
-import urllib.request
-import threading
 import string
 import aiohttp
 import asyncio
@@ -39,7 +37,6 @@ async def get_password(session):
             """
             if "This user exists" in response[0]:
                 natas16_password += response[1]
-
 
     spinner.succeed(text="The password for natas 16 is: " + natas16_password)
 
