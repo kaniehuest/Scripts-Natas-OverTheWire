@@ -15,6 +15,7 @@ from natas13 import get_natas14_password
 from natas14 import get_natas15_password
 from natas15 import get_natas16_password
 from natas16 import get_natas17_password
+from natas17 import get_natas18_password
 
 
 def main():
@@ -35,6 +36,7 @@ def main():
     natas15_password = get_natas15_password(natas14_password)
     natas16_password = get_natas16_password(natas15_password)
     natas17_password = get_natas17_password(natas16_password)
+    natas18_password = get_natas18_password(natas17_password)
 
 
 if __name__ == '__main__':
