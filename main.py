@@ -19,6 +19,19 @@ from natas17 import get_natas18_password
 
 
 def main():
+    art2 = """
+ ███▄    █  ▄▄▄     ▄▄▄█████▓ ▄▄▄        ██████ 
+ ██ ▀█   █ ▒████▄   ▓  ██▒ ▓▒▒████▄    ▒██    ▒ 
+▓██  ▀█ ██▒▒██  ▀█▄ ▒ ▓██░ ▒░▒██  ▀█▄  ░ ▓██▄   
+▓██▒  ▐▌██▒░██▄▄▄▄██░ ▓██▓ ░ ░██▄▄▄▄██   ▒   ██▒
+▒██░   ▓██░ ▓█   ▓██▒ ▒██▒ ░  ▓█   ▓██▒▒██████▒▒
+░ ▒░   ▒ ▒  ▒▒   ▓▒█░ ▒ ░░    ▒▒   ▓▒█░▒ ▒▓▒ ▒ ░
+░ ░░   ░ ▒░  ▒   ▒▒ ░   ░      ▒   ▒▒ ░░ ░▒  ░ ░
+   ░   ░ ░   ░   ▒    ░        ░   ▒   ░  ░  ░  
+         ░       ░  ░              ░  ░      ░                                                                                                   
+:)
+"""
+    print(art2)
     natas1_password = get_natas1_password()
     natas2_password = get_natas2_password(natas1_password)
     natas3_password = get_natas3_password(natas2_password)
