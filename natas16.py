@@ -16,7 +16,7 @@ async def get_password_request(session, natas17_password, character):
     url = "http://natas16.natas.labs.overthewire.org/"
     async with session.post(url, data=data) as response:
 
-        return await response.content_length, character
+        return response.content_length, character
 
 
 async def get_password(session):
@@ -36,7 +36,7 @@ async def get_password(session):
         for response in requests:
             response_length = response[0]
             character_injected = response[1]
-            if response_length != 1122:
+            if response_length != 512:
                 natas17_password += character_injected
                 spinner.stop()
                 spinner = Halo(text=SPINNER_TEXT + natas17_password, spinner="bouncingBar", color="blue")
